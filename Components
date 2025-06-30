@@ -1,0 +1,9 @@
+Components using:
+Arduino Nano
+DFPlayer Mini MP3 Module
+DS3231 RTC Module
+KY-038 or LM393 Sound Sensor
+3W Speaker (8Ω recommended)
+Micro SD Card (in DFPlayer)
+Power: 5V via USB or battery
+Optional: LED for status
