@@ -1,0 +1,71 @@
+import os
+import time
+from datetime import datetime
+from playsound import playsound
+import sounddevice as sd
+import numpy as np
+
+# ----------------------------
+# Step 1: Detect first .mp3 file
+# ----------------------------
+def get_first_mp3_file():
+    """
+    Scans current directory and returns the first .mp3 file name.
+    """
+    for file in os.listdir():
+        if file.lower().endswith(".mp3"):
+            return file
+    return None
+
+# ----------------------------
+# Step 2: Load music
+# ----------------------------
+music_file = get_first_mp3_file()
+
+if not music_file:
+    print(" No .mp3 file found in the folder. Please add a music file.")
+    exit()
+else:
+    print(f" Music File Found: {music_file}")
+
+# ----------------------------
+# Step 3: Set Alarm Time
+# ----------------------------
+alarm_time = input(" Set Alarm Time (HH:MM, 24-hour format): ")
+
+# ----------------------------
+# Step 4: Sound Detection Setup
+# ----------------------------
+SOUND_THRESHOLD = 0.3  # Adjust this value based on your environment
+
+def is_loud_sound_detected(duration_sec=2, sample_rate=44100):
+    """
+    Records sound and returns True if volume exceeds threshold.
+    """
+    print(" Listening for sound...")
+    recording = sd.rec(int(duration_sec * sample_rate), samplerate=sample_rate, channels=1)
+    sd.wait()
+    volume = np.linalg.norm(recording) / len(recording)
+    print(f" Detected Volume: {volume:.4f}")
+    return volume > SOUND_THRESHOLD
+
+# ----------------------------
+# Step 5: Time Check Function
+# ----------------------------
+def is_alarm_time():
+    current = datetime.now().strftime("%H:%M")
+    return current == alarm_time
+
+# ----------------------------
+# Step 6: Main Loop
+# ----------------------------
+print("\n Smart Melody Timer is running...\n")
+
+while True:
+    if is_alarm_time():
+        print("Time Matched! Playing music...")
+        playsound(music_file)
+        break
+
+    if is_loud_sound_detected():
+        print(" Sound Detected! Playing music...")
